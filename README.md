@@ -98,7 +98,7 @@ Git хранит таблицу соответствий **хеш - информ
 Что получить сокращенный лог - ```git log --oneline``` появятся только первые несколько символов хеша и их комментарии.  
 Он полезен, если уже много коммитов в ветке.  
 
-# HEAD - всему голова  
+## HEAD - всему голова  
 ---  
 Файл HEAD - оидн из служебных файлов папки .git. Он указывает на коммит, который был сделан последним.  
 
@@ -106,4 +106,41 @@ Git хранит таблицу соответствий **хеш - информ
 
 Git обновляет refs/heads/master когда делается коммит  
 
+## Статусы файлов в Git  
+---  
+**Статусы untracked/tracked, staged и modified**  
+
+* untracked
+* staged
+* tracked
+* modified  
+
+**Про staged и modified**  
+
+Команда git add добавляет в staging area только текущее содержимое файла. Если вы, например, сделаете git add file.txt, а затем измените file.txt, то новое содержимое файла не будет находиться в staging.  
+
+Git сообщит об этом с помощью статуса modified: файл изменён относительно той версии, которая уже в staging. Чтобы добавить в staging последнюю версию, нужно выполнить git add file.txt ещё раз.  
+
+```mermaid
+sequenceDiagram
+    participant untracked
+    participant staged
+    participant modified
+    participant tracked
+    untracked->>staged: git add
+    modified->>staged: git add
+    staged->>modified: Изменения
+    staged->>tracked: git commit
+    tracked->>modified: Изменения
+```  
+1. Файл только что создали. Git ещё не отслеживает содержимое этого файла. Состояние: untracked.
+2. Файл добавили в staging area с помощью git add. Состояние: staged (+ tracked).
+	* Возможно, изменили файл ещё раз. Состояния: staged, modified (+ tracked).
+          Обратите внимание: staged и modified у одного файла, но у разных его версий.
+	* Ещё раз выполнили git add. Состояние: staged (+ tracked). 
+3. Сделали коммит с помощью git commit. Состояние: tracked. 
+4. Изменили файл. Состояние: modified (+ tracked).
+5. Снова добавили в staging area с помощью git add. Состояния: staged (+ tracked). 
+6. Сделали коммит. Состояния: tracked.
+7. Повторили пункты 4−7 много-много раз  
 
